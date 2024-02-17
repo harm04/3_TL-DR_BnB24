@@ -14,7 +14,7 @@ class Page1 extends StatelessWidget {
             child: Column(
               // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                 const SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Card(
@@ -33,15 +33,31 @@ class Page1 extends StatelessWidget {
                   height: 30,
                 ),
                 const Text(
-                'One solution for',
-                style: TextStyle(color: Colors.black, fontSize: 35,fontWeight: FontWeight.bold),
-              ),
-              const Text('corrupt system!',style: TextStyle(color: Colors.black, fontSize: 35,fontWeight: FontWeight.bold),),
-              const Text('You are safe here !'),
-             const SizedBox(height: 70,),
-             FloatingActionButton(onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Page2()));
-             },backgroundColor: Colors.blue,child: const Icon(Icons.arrow_forward),)
+                  'One solution for',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold),
+                ),
+                const Text(
+                  'corrupt system!',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold),
+                ),
+                const Text('You are safe here !'),
+                const SizedBox(
+                  height: 70,
+                ),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const Page2()));
+                  },
+                  backgroundColor: Colors.blue,
+                  child: const Icon(Icons.arrow_forward),
+                )
               ],
             ),
           ),

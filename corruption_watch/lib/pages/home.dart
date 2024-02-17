@@ -1,8 +1,7 @@
+import 'package:corruption_watch/pages/chat.dart';
 import 'package:corruption_watch/widgets/button.dart';
 import 'package:corruption_watch/widgets/ministry_card.dart';
 import 'package:flutter/material.dart';
-
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -74,7 +73,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            GestureDetector(onTap: () {}, child: button('Others', 50, 350,Colors.white)),
+            GestureDetector(
+                onTap: () {
+                  Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',)),
+            );
+                }, child: button('Others', 50, 350, Colors.white)),
           ],
         ),
       ),

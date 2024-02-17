@@ -10,7 +10,6 @@ interface KeyBundle {
   identityKey: Array<number>; // Long term EC key (permanent(?)).
   signedPreKey: Array<number>; // Medium term EC key, refreshed periodically.
   preKey: Array<number>; // Short term (ephemeral), one-time use key for establishing a session between two devices.
-
   // Every time a device asks for another device's keys, a single preKey is returned, but it's also deleted from the database.
   // Therefore, multiple pre-keys are sent at registration time, so this should be `preKeys: Array<Array<number>>`.
   // So a device should periodically check the status of it's own keys (how many pre-keys are left) and replenish them as needed.
@@ -36,7 +35,6 @@ interface SocketEvent {
  * Map<username, UserInfo>, using this approach a user could only have one device.
  * A multi-device approach would be something like `Record<string, UserInfo[]>`.
  */
-
 const keys: Record<string, UserInfo> = {};
 // For keeping track of connected sockets, mapped by username. Same as above in regards to the one-device approach.
 const sockets: Record<string, websocket> = {};

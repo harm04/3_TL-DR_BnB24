@@ -10,9 +10,9 @@ class Page2 extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
           child: Center(
-            child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
             const SizedBox(
               height: 40,
             ),
@@ -35,25 +35,38 @@ class Page2 extends StatelessWidget {
             //   'Complain and stay anonymous!',
             //   style: TextStyle(color: Colors.black, fontSize: 35,fontWeight: FontWeight.bold),
             // ),
-            
+
             const Text(
               'Complain and stay ',
-              style: TextStyle(color: Colors.black, fontSize: 35,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold),
             ),
-            const Text('anonymous!',style: TextStyle(color: Colors.black, fontSize: 35,fontWeight: FontWeight.bold),),
+            const Text(
+              'anonymous!',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold),
+            ),
             const Text('You are safe here !'),
-            SizedBox(height: 70,),
+            const SizedBox(
+              height: 70,
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: InkWell(
-                onTap: (){
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage(  )));
-                },
-                child: button('Get started', 50, double.infinity,Colors.blue)),
+                  onTap: () {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const HomePage()));
+                  },
+                  child:
+                      button('Get started', 50, double.infinity, Colors.blue)),
             )
-                    ],
-                  ),
-          )),
+          ],
+        ),
+      )),
     );
   }
 }

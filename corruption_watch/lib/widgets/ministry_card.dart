@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 Widget ministryCard(BuildContext context,ImageProvider<Object> image,String text){
   return Card(
@@ -14,8 +13,8 @@ Widget ministryCard(BuildContext context,ImageProvider<Object> image,String text
       child: Column(
         children: [
           const SizedBox(height: 20,),
-           Text(text,style: TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w600),),
-          SizedBox(height: 10,),
+           Text(text,style: const TextStyle(color: Colors.black,fontSize: 18,fontWeight: FontWeight.w600),),
+          const SizedBox(height: 10,),
           Container(
             
             child: Expanded(child: Padding(
