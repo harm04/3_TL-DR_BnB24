@@ -2,6 +2,10 @@ import 'package:corruption_watch/pages/chat.dart';
 import 'package:corruption_watch/widgets/button.dart';
 import 'package:corruption_watch/widgets/ministry_card.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,11 +15,58 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+String data="";
+void getPosition()async {
+var status = await Permission.location.request();
+if(status==PermissionStatus.granted){
+  Position datas = await _determinedPosition();
+  GetAddressFromLong(datas);
+  print("$data");
+}
+}
+
+void GetAddressFromLong(Position datas)async{
+List<Placemark> placemark=await placemarkFromCoordinates(datas.latitude, datas.longitude);
+Placemark place= placemark[0];
+var address ="${place.street},${place.country}";
+setState(() {
+  data=address;
+});
+}
+
+_determinedPosition()async{
+  bool serviceEnabled;
+  LocationPermission permission;
+
+  serviceEnabled=await Geolocator.isLocationServiceEnabled();
+  if(!serviceEnabled){
+    return Future.error("Location service are disabled");
+  }
+  permission=await Geolocator.checkPermission();
+  if(permission==LocationPermission.deniedForever){
+    return Future.error("Location permission denied foreover");
+  }
+  return await Geolocator.getCurrentPosition();
+
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10.0),
+            child: IconButton(icon: Icon(Icons.camera_alt,size: 40, ),onPressed: (){
+          
+              getPosition();
+              print('$data');
+            },)
+          ),
+        ],
         title: const Text(
           'Corruption watch',
           style: TextStyle(

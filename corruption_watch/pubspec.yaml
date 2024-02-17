@@ -38,6 +38,10 @@ dependencies:
   libsignal_protocol_dart: ^0.7.1
   web_socket_channel: ^2.4.4
   http: ^1.2.1
+  geocoding: ^2.1.0
+  geolocator: ^7.0.2
+  permission_handler: ^6.0.1
+  
 
 dev_dependencies:
   flutter_test:
