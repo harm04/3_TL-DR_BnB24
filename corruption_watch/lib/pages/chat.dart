@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new
+
 import 'dart:convert';
 import 'dart:core';
 import 'dart:typed_data';
@@ -35,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
   var preKeyStore = InMemoryPreKeyStore();
   var signedPreKeyStore = InMemorySignedPreKeyStore();
   var sessionStore = InMemorySessionStore();
-  var identityKeyPairStore;
+  var identityKeyStore;
 
   @override
   void initState() {
@@ -44,9 +46,9 @@ class _ChatPageState extends State<ChatPage> {
 
   void connectToServer() async {
     WebSocket.connect("ws://localhost:3000", headers: {
-      "authorization": this.myUser,
+      "authorization": myUser,
     }).then((ws) {
-      this.setState(() {
+      setState(() {
         this.ws = IOWebSocketChannel(ws);
       });
 
@@ -66,8 +68,8 @@ class _ChatPageState extends State<ChatPage> {
     } else if (jsonParams["event"] == "message") {
       final info = await getUserInfo(jsonParams["data"]["userId"]);
 
-      var signalProtocolStore = InMemorySignalProtocolStore(
-          info.identityKeyPair, info.registrationId);
+      var signalProtocolStore =
+          InMemorySignalProtocolStore(info.identityKey, info.registrationId);
       var aliceAddress =
           SignalProtocolAddress(jsonParams["data"]["userId"], info.deviceId);
       var remoteSessionCipher =
@@ -78,10 +80,10 @@ class _ChatPageState extends State<ChatPage> {
       signalProtocolStore.storeSignedPreKey(
           info.signedPreKey.id, info.signedPreKey);
 
-      final messageBytes = remoteSessionCipher.decrypt(PreKeySignalMessage(
+      final messageBytes = await remoteSessionCipher.decrypt(PreKeySignalMessage(
           Uint8List.fromList(jsonParams["data"]["message"].cast<int>())));
 
-      final message = utf8.decode(List.from(messageBytes as Iterable));
+      final message = utf8.decode(List.from(messageBytes));
 
       setState(() {
         messages.add(message);
@@ -93,9 +95,9 @@ class _ChatPageState extends State<ChatPage> {
     var registrationId = generateRegistrationId(false);
 
     // Keys
-    var identityKeyPair = generateIdentityKeyPair(); // Long term key
+    var identityKey = generateIdentityKeyPair(); // Long term key
     var signedPreKey =
-        generateSignedPreKey(identityKeyPair, 0); // Medium term key
+        generateSignedPreKey(identityKey, 0); // Medium term key
     var preKeys = generatePreKeys(0, 110); // One time key
 
     // Store keys
@@ -104,18 +106,17 @@ class _ChatPageState extends State<ChatPage> {
     }
     signedPreKeyStore.storeSignedPreKey(signedPreKey.id, signedPreKey);
 
-    identityKeyPairStore =
-        InMemoryIdentityKeyStore(identityKeyPair, registrationId);
+    identityKeyStore = InMemoryIdentityKeyStore(identityKey, registrationId);
 
     final userInfo = UserInfo(
       registrationId,
       1,
-      identityKeyPair,
+      identityKey,
       signedPreKey,
       preKeys[0],
     );
 
-    this.ws!.sink.add(jsonEncode({
+    ws!.sink.add(jsonEncode({
           "event": "set_info",
           "data": userInfo.toMap(),
         }));
@@ -138,12 +139,12 @@ class _ChatPageState extends State<ChatPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Builder(builder: (context) {
-                if (this.myUser == null) {
+                if (myUser == null) {
                   return Column(children: [
                     const Text('Insert your name:'),
                     TextField(
                       onChanged: (val) {
-                        this.textFieldValues["myUser"] = val;
+                        textFieldValues["myUser"] = val;
                       },
                     ),
                     MaterialButton(
@@ -151,27 +152,27 @@ class _ChatPageState extends State<ChatPage> {
                       child: const Text('Set my name'),
                       onPressed: () {
                         setState(() {
-                          this.myUser = this.textFieldValues["myUser"];
+                          myUser = textFieldValues["myUser"];
                         });
                       },
                     ),
                   ]);
                 }
 
-                if (this.targetUser == null) {
+                if (targetUser == null) {
                   return Column(children: [
                     const Text('Insert target name:'),
                     TextField(
                       key: const Key('targetUserInput'),
                       onChanged: (val) {
-                        this.textFieldValues["targetUser"] = val;
+                        textFieldValues["targetUser"] = val;
                       },
                     ),
                     MaterialButton(
                       child: const Text('Set target name'),
                       onPressed: () {
                         setState(() {
-                          this.targetUser = this.textFieldValues["targetUser"];
+                          targetUser = textFieldValues["targetUser"];
                         });
                       },
                     ),
@@ -205,11 +206,11 @@ class _ChatPageState extends State<ChatPage> {
                       Text('Using $myUser'),
                       Column(children: [
                         const Text('Messages:'),
-                        ...this.messages.map((u) => Text(u)).toList(),
+                        ...messages.map((u) => Text(u)),
                       ]),
                       TextField(
                         onChanged: (val) {
-                          this.textFieldValues["message"] = val;
+                          textFieldValues["message"] = val;
                         },
                       ),
                       MaterialButton(
@@ -239,7 +240,7 @@ class _ChatPageState extends State<ChatPage> {
       userInfo.signedPreKey.id,
       userInfo.signedPreKey.getKeyPair().publicKey,
       userInfo.signedPreKey.signature,
-      userInfo.identityKeyPair.getPublicKey(),
+      userInfo.identityKey.getPublicKey(),
     );
 
     setState(() {
@@ -248,18 +249,18 @@ class _ChatPageState extends State<ChatPage> {
 
     var targetAddress = SignalProtocolAddress(targetUser!, 1);
     var sessionBuilder = SessionBuilder(sessionStore, preKeyStore,
-        signedPreKeyStore, identityKeyPairStore, targetAddress);
+        signedPreKeyStore, identityKeyStore, targetAddress);
 
     sessionBuilder.processPreKeyBundle(bundle);
 
     var sessionCipher = SessionCipher(sessionStore, preKeyStore,
-        signedPreKeyStore, identityKeyPairStore, targetAddress);
-    var ciphertext = sessionCipher.encrypt(
-        Uint8List.fromList(utf8.encode(this.textFieldValues["message"]!)));
+        signedPreKeyStore, identityKeyStore, targetAddress);
+    var ciphertext = await sessionCipher.encrypt(
+        Uint8List.fromList(utf8.encode(textFieldValues["message"]!)));
 
-    final message = ciphertext;
+    final message = ciphertext.serialize(); 
 
-    this.ws!.sink.add(jsonEncode({
+    ws!.sink.add(jsonEncode({
           "event": "message",
           "data": {
             "userId": targetUser,
@@ -284,11 +285,11 @@ class _ChatPageState extends State<ChatPage> {
 class UserInfo {
   final int registrationId;
   final int deviceId;
-  final IdentityKeyPair identityKeyPair;
+  final IdentityKeyPair identityKey;
   final SignedPreKeyRecord signedPreKey;
   final PreKeyRecord preKey;
 
-  UserInfo(this.registrationId, this.deviceId, this.identityKeyPair,
+  UserInfo(this.registrationId, this.deviceId, this.identityKey,
       this.signedPreKey, this.preKey);
 
   Map<String, dynamic> toMap() {
@@ -296,7 +297,7 @@ class UserInfo {
       "registrationId": registrationId,
       "deviceId": deviceId,
       "bundle": {
-        "identityKeyPair": identityKeyPair.serialize(),
+        "identityKey": identityKey.serialize(),
         "signedPreKey": signedPreKey.serialize(),
         "preKey": preKey.serialize(),
       }
@@ -308,7 +309,7 @@ class UserInfo {
       json["registrationId"],
       json["deviceId"],
       IdentityKeyPair.fromSerialized(
-          Uint8List.fromList(json["bundle"]["identityKeyPair"].cast<int>())),
+          Uint8List.fromList(json["bundle"]["identityKey"].cast<int>())),
       SignedPreKeyRecord.fromSerialized(
           Uint8List.fromList(json["bundle"]["signedPreKey"].cast<int>())),
       PreKeyRecord.fromBuffer(
