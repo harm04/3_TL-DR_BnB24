@@ -4,6 +4,7 @@ Widget button(
   String text,
   double height,
   double width,
+  Color color
 ) {
   return Card(
     color: Colors.white,
@@ -13,7 +14,7 @@ Widget button(
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
-            color: Colors.white,
+            color: color,
           ),
           height: height,
           width: width,

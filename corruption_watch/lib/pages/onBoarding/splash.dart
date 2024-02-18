@@ -1,6 +1,5 @@
-import 'package:corruption_watch/pages/home.dart';
+import 'package:corruption_watch/pages/onBoarding/page_1.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,12 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void navigatToHome()async{
-await Future.delayed(Duration(milliseconds: 1500),(){});
-Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>HomePage()));
+await Future.delayed(const Duration(milliseconds: 2500),(){});
+Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const Page1()));
   }
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         body: Stack(
           children: [
             Column(

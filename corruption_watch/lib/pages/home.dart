@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 20,
             ),
-            GestureDetector(onTap: () {}, child: button('Others', 50, 350)),
+            GestureDetector(onTap: () {}, child: button('Others', 50, 350,Colors.white)),
           ],
         ),
       ),
