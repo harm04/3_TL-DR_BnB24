@@ -11,9 +11,11 @@ import 'package:http/http.dart' as http;
 
 
 class ChatPage extends StatefulWidget {
-  const ChatPage({super.key, required this.title});
+   final String title;
+    final String ministry;
+  const ChatPage({super.key, required this.title, required this.ministry});
 
-  final String title;
+ 
 
   @override
   _ChatPageState createState() => _ChatPageState();

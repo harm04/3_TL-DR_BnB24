@@ -1,9 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:corruption_watch/pages/chat.dart';
 import 'package:corruption_watch/widgets/button.dart';
 import 'package:corruption_watch/widgets/ministry_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 
@@ -21,12 +26,15 @@ void getPosition()async {
 var status = await Permission.location.request();
 if(status==PermissionStatus.granted){
   Position datas = await _determinedPosition();
-  GetAddressFromLong(datas);
+  getAddressFromLong(datas);
   print("$data");
 }
 }
 
-void GetAddressFromLong(Position datas)async{
+
+
+
+void getAddressFromLong(Position datas)async{
 List<Placemark> placemark=await placemarkFromCoordinates(datas.latitude, datas.longitude);
 Placemark place= placemark[0];
 var address ="${place.street},${place.country}";
@@ -93,17 +101,33 @@ _determinedPosition()async{
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ministryCard(
-                    context,
-                    const AssetImage('assets/images/law.jpeg'),
-                    'Law\'s and Judes'),
+                GestureDetector(
+                  onTap: (){
+                     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',ministry: 'Law')),
+            );
+                  },
+                  child: ministryCard(
+                      context,
+                      const AssetImage('assets/images/law.jpeg'),
+                      'Law\'s and Judes'),
+                ),
                 const SizedBox(
                   width: 20,
                 ),
-                ministryCard(
-                    context,
-                    const AssetImage('assets/images/panchayatiRaj.jpeg'),
-                    'Panchayati raj')
+                GestureDetector(
+                  onTap: (){
+                     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',ministry: 'PanchayatiRaj')),
+            );
+                  },
+                  child: ministryCard(
+                      context,
+                      const AssetImage('assets/images/panchayatiRaj.jpeg'),
+                      'Panchayati raj'),
+                )
               ],
             ),
             const SizedBox(
@@ -112,13 +136,29 @@ _determinedPosition()async{
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ministryCard(context,
-                    const AssetImage('assets/images/defence.jpeg'), 'Defence'),
+                GestureDetector(
+                  onTap: (){
+                     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',ministry: 'Defence')),
+            );
+                  },
+                  child: ministryCard(context,
+                      const AssetImage('assets/images/defence.jpeg'), 'Defence'),
+                ),
                 const SizedBox(
                   width: 20,
                 ),
-                ministryCard(context,
-                    const AssetImage('assets/images/revenue.jpeg'), 'Revenue')
+                GestureDetector(
+                  onTap: (){
+                     Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',ministry: 'Revenue')),
+            );
+                  },
+                  child: ministryCard(context,
+                      const AssetImage('assets/images/revenue.jpeg'), 'Revenue'),
+                )
               ],
             ),
             const SizedBox(
@@ -128,7 +168,7 @@ _determinedPosition()async{
                 onTap: () {
                   Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',)),
+              MaterialPageRoute(builder: (context) => const ChatPage(title: 'Complain',ministry: 'Others')),
             );
                 }, child: button('Others', 50, 350, Colors.white)),
           ],

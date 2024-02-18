@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget ministryCard(BuildContext context,ImageProvider<Object> image,String text){
+Widget ministryCard(BuildContext context,ImageProvider<Object> image,String text,){
   return Card(
    
     elevation: 20,child: Container(
